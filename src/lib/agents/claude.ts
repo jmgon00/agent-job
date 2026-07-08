@@ -36,7 +36,7 @@ export async function executeAgent({
       ],
     })
 
-    const textContent = message.content.find((c: any) => c.type === "text")
+    const textContent = message.content.find((c) => c.type === "text")
     if (!textContent || textContent.type !== "text") {
       throw new Error("No text response from Claude")
     }
