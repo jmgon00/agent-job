@@ -23,8 +23,6 @@ model User {
   savedJobs     SavedJob[]
   applications  Application[]
   portalSyncs   PortalSync[]
-
-  @@index([email])
 }
 
 model UserProfile {

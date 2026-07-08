@@ -12,7 +12,7 @@ en LinkedIn y Bumeran, y seguis todo desde un dashboard.
 - **Base de Datos:** Prisma 6 + PostgreSQL (Neon)
 - **IA:** Claude 3.5 Sonnet (`@anthropic-ai/sdk`)
 - **Validacion:** Zod 4
-- **Runtime:** Node.js 18+
+- **Runtime:** Node.js 20.9+
 
 ## Instalacion
 
