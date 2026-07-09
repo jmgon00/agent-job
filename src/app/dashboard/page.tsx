@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getStoredUser } from "@/lib/auth-storage";
 import { JOB_STATUSES, type JobStatus } from "@/lib/job-status";
 
@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const [jobs, setJobs] = useState<SavedJobRow[] | null>(null);
   const [error, setError] = useState("");
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const latestRequestRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     const user = getStoredUser();
@@ -36,6 +37,9 @@ export default function DashboardPage() {
     if (!user || !jobs) return;
 
     const previous = jobs.find((j) => j.id === jobId)?.status;
+    const requestId = (latestRequestRef.current[jobId] ?? 0) + 1;
+    latestRequestRef.current[jobId] = requestId;
+
     setJobs(jobs.map((j) => (j.id === jobId ? { ...j, status: newStatus } : j)));
     setRowErrors((prev) => ({ ...prev, [jobId]: "" }));
 
@@ -50,16 +54,16 @@ export default function DashboardPage() {
         throw new Error("failed");
       }
     } catch {
+      // Only revert if no newer status change has been issued for this
+      // row since — a value-equality check isn't enough (the same
+      // status can recur from a later request), so track request
+      // recency explicitly instead.
+      if (latestRequestRef.current[jobId] !== requestId) return;
+
       setJobs((current) =>
         current
           ? current.map((j) =>
-              // Only revert if this row still shows the optimistic value
-              // THIS request set. If a newer status change already
-              // succeeded and moved the row past newStatus, leave it —
-              // otherwise this failure would clobber that later success.
-              j.id === jobId && j.status === newStatus
-                ? { ...j, status: previous ?? j.status }
-                : j
+              j.id === jobId ? { ...j, status: previous ?? j.status } : j
             )
           : current
       );
