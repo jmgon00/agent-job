@@ -57,12 +57,34 @@ npm run dev
 
 Abre [http://localhost:3000](http://localhost:3000).
 
+## Autenticacion (MVP)
+
+Toda la app esta detras de un gate de email: al entrar sin un usuario guardado en
+localStorage, solo se ve un modal pidiendo tu email (no se puede cerrar sin
+completarlo). Al enviarlo, se crea o recupera tu usuario en la base (`POST
+/api/auth`) y queda cacheado en localStorage para las proximas visitas. No hay
+contrasena, sesion ni verificacion de email — es un mecanismo de identidad minimo
+para el MVP. Hay un boton "Cerrar sesion" para limpiar el localStorage y volver a
+ver el modal.
+
+## Tests
+
+```bash
+npm run test
+```
+
+Corre con [Vitest](https://vitest.dev/). Los tests de `src/app/api/auth/route.test.ts`
+son de integracion contra tu base de datos real de Neon (no hay mock): necesitas un
+`DATABASE_URL` valido en `.env.local` para correrlos, y cada test limpia las filas
+que crea (emails unicos bajo `@agentjob-test.local`).
+
 ## Estructura del Proyecto
 
 ```
 src/
   app/
     api/
+      auth/
       jobs/
       profiles/
       applications/
@@ -70,9 +92,12 @@ src/
     page.tsx
   components/
     sections/
+      AuthGate.tsx
+      EmailGateModal.tsx
     ui/
   lib/
     agents/
+    auth-storage.ts
     db.ts
     validators.ts
   content/
@@ -84,6 +109,7 @@ prisma/
 
 ## Roadmap MVP
 
+- [x] Autenticacion minima (email + localStorage)
 - [ ] Upload de Excel con postulaciones/perfiles
 - [ ] Agente de IA: optimizacion de CV/perfil por portal
 - [ ] Conexion a APIs de LinkedIn / Bumeran
