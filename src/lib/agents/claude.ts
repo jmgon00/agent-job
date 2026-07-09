@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk"
+import { z } from "zod"
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -49,4 +50,47 @@ export async function executeAgent({
     console.error("[executeAgent error]", error)
     throw error
   }
+}
+
+export interface ExecuteStructuredAgentParams<T> {
+  agentInstructions: string
+  userQuery: string
+  schema: z.ZodType<T>
+  maxTokens?: number
+  temperature?: number
+}
+
+export async function executeStructuredAgent<T>({
+  agentInstructions,
+  userQuery,
+  schema,
+  maxTokens = 1000,
+  temperature = 0.7,
+}: ExecuteStructuredAgentParams<T>): Promise<T> {
+  const message = await client.messages.create({
+    model: "claude-3-5-sonnet-20241022",
+    max_tokens: maxTokens,
+    temperature,
+    system: agentInstructions,
+    messages: [
+      {
+        role: "user",
+        content: userQuery,
+      },
+    ],
+  })
+
+  const textContent = message.content.find((c) => c.type === "text")
+  if (!textContent || textContent.type !== "text") {
+    throw new Error("No text response from Claude")
+  }
+
+  let parsedJson: unknown
+  try {
+    parsedJson = JSON.parse(textContent.text)
+  } catch {
+    throw new Error("Claude no devolvio un JSON valido")
+  }
+
+  return schema.parse(parsedJson)
 }

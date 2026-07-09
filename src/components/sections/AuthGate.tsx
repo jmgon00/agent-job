@@ -37,17 +37,30 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="flex items-center justify-end gap-4 border-b border-dark-700 bg-dark-900 px-6 py-3 text-sm text-dark-300">
-        <span>{user.email}</span>
-        <button
-          onClick={() => {
-            clearStoredUser();
-            setUser(null);
-          }}
-          className="text-cyan-400 hover:text-cyan-300"
-        >
-          Cerrar sesion
-        </button>
+      <div className="flex items-center justify-between border-b border-dark-700 bg-dark-900 px-6 py-3 text-sm text-dark-300">
+        <nav className="flex items-center gap-4">
+          <a href="/dashboard" className="hover:text-cyan-400">
+            Dashboard
+          </a>
+          <a href="/upload" className="hover:text-cyan-400">
+            Subir Excel
+          </a>
+          <a href="/profile" className="hover:text-cyan-400">
+            Perfil
+          </a>
+        </nav>
+        <div className="flex items-center gap-4">
+          <span>{user.email}</span>
+          <button
+            onClick={() => {
+              clearStoredUser();
+              setUser(null);
+            }}
+            className="text-cyan-400 hover:text-cyan-300"
+          >
+            Cerrar sesion
+          </button>
+        </div>
       </div>
       {children}
     </>
