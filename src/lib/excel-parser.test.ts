@@ -92,6 +92,16 @@ describe("parseExcelRows", () => {
     expect(result.valid).toHaveLength(2);
   });
 
+  it("reports an error for a row missing all required fields but with optional data present", async () => {
+    const buffer = await buildWorkbookBuffer(
+      ["Titulo", "Empresa", "Portal", "Salario", "Link", "Estado"],
+      [["", "", "", "5000", "", "activo"]]
+    );
+    const result = await parseExcelRows(buffer);
+    expect(result.valid).toEqual([]);
+    expect(result.errors).toEqual([{ row: 2, reason: "Falta Titulo" }]);
+  });
+
   it("returns empty valid/errors for a header-only sheet", async () => {
     const buffer = await buildWorkbookBuffer(
       ["Titulo", "Empresa", "Portal", "Salario", "Link", "Estado"],

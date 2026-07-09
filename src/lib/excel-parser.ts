@@ -78,7 +78,7 @@ export async function parseExcelRows(buffer: Buffer): Promise<ParseResult> {
     const link = getCell("Link");
     const status = getCell("Estado");
 
-    if (!title && !company && !portal && !link) {
+    if (!title && !company && !portal && !salary && !link && !status) {
       continue;
     }
 
