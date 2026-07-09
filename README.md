@@ -87,6 +87,18 @@ En `/dashboard` (requiere estar autenticado) se ve una tabla con tus `SavedJob`
 no es tuyo). Sin filtros, orden, ni edicion de otros campos por ahora. Si no
 tenes jobs guardados, la pagina te manda a `/upload`.
 
+## Perfil optimizado por IA
+
+En `/profile` (requiere estar autenticado) el usuario escribe un texto libre
+describiendo su experiencia, skills y objetivo laboral (su "perfil base") y
+lo guarda con `PUT /api/profiles/base`. Eligiendo un portal (LinkedIn o
+Bumeran) y apretando "Optimizar" (`POST /api/profiles/optimize`), un agente
+de Claude genera un `headline` y `summary` adaptados a ese portal a partir
+del perfil base, y el resultado se guarda automaticamente como el
+`UserProfile` de ese `(usuario, portal)` — cada optimizacion sobrescribe la
+anterior, no hay historial ni edicion manual del resultado. Requiere la
+variable de entorno `ANTHROPIC_API_KEY`.
+
 ## Tests
 
 ```bash
@@ -111,8 +123,11 @@ src/
         [id]/
         upload/
       profiles/
+        base/
+        optimize/
       applications/
     dashboard/
+    profile/
     upload/
     page.tsx
   components/
@@ -139,7 +154,7 @@ prisma/
 - [x] Autenticacion minima (email + localStorage)
 - [x] Upload de Excel con postulaciones/perfiles
 - [x] Dashboard: estado de perfiles + proximas acciones
-- [ ] Agente de IA: optimizacion de CV/perfil por portal
+- [x] Agente de IA: optimizacion de CV/perfil por portal
 - [ ] Conexion a APIs de LinkedIn / Bumeran
 - [ ] Job scraper
 
