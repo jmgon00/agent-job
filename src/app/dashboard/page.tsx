@@ -10,7 +10,7 @@ interface SavedJobRow {
   company: string;
   portal: string;
   link: string;
-  status: string;
+  status: JobStatus;
 }
 
 export default function DashboardPage() {
@@ -40,7 +40,11 @@ export default function DashboardPage() {
     const requestId = (latestRequestRef.current[jobId] ?? 0) + 1;
     latestRequestRef.current[jobId] = requestId;
 
-    setJobs(jobs.map((j) => (j.id === jobId ? { ...j, status: newStatus } : j)));
+    setJobs((current) =>
+      current
+        ? current.map((j) => (j.id === jobId ? { ...j, status: newStatus } : j))
+        : current
+    );
     setRowErrors((prev) => ({ ...prev, [jobId]: "" }));
 
     try {

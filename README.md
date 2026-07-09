@@ -77,14 +77,25 @@ postulaciones/empleos guardados. La primera fila debe tener estos encabezados
 como error sin frenar el resto del archivo. Limite de tamano: 5MB por archivo.
 No hay deduplicacion (cada subida crea filas nuevas) ni soporte para `.xls`/`.csv`.
 
+## Dashboard
+
+En `/dashboard` (requiere estar autenticado) se ve una tabla con tus `SavedJob`
+(titulo, empresa, portal, estado, link). El estado (`saved` / `applied` /
+`discarded`) se puede cambiar directo desde un dropdown en cada fila —
+`GET /api/jobs?userId=` trae el listado (mas reciente primero, solo tus jobs) y
+`PATCH /api/jobs/[id]` actualiza el estado (devuelve 404 si el job no existe o
+no es tuyo). Sin filtros, orden, ni edicion de otros campos por ahora. Si no
+tenes jobs guardados, la pagina te manda a `/upload`.
+
 ## Tests
 
 ```bash
 npm run test
 ```
 
-Corre con [Vitest](https://vitest.dev/). Los tests de `src/app/api/auth/route.test.ts`
-y `src/app/api/jobs/upload/route.test.ts` son de integracion contra tu base de datos
+Corre con [Vitest](https://vitest.dev/). Los tests de `src/app/api/auth/route.test.ts`,
+`src/app/api/jobs/upload/route.test.ts`, `src/app/api/jobs/route.test.ts` y
+`src/app/api/jobs/[id]/route.test.ts` son de integracion contra tu base de datos
 real de Neon (no hay mock): necesitas un `DATABASE_URL` valido en `.env.local` para
 correrlos, y cada test limpia las filas que crea (emails unicos bajo
 `@agentjob-test.local`).
@@ -97,6 +108,7 @@ src/
     api/
       auth/
       jobs/
+        [id]/
         upload/
       profiles/
       applications/
@@ -113,6 +125,7 @@ src/
     auth-storage.ts
     db.ts
     excel-parser.ts
+    job-status.ts
     validators.ts
   content/
   types/
@@ -125,9 +138,9 @@ prisma/
 
 - [x] Autenticacion minima (email + localStorage)
 - [x] Upload de Excel con postulaciones/perfiles
+- [x] Dashboard: estado de perfiles + proximas acciones
 - [ ] Agente de IA: optimizacion de CV/perfil por portal
 - [ ] Conexion a APIs de LinkedIn / Bumeran
-- [ ] Dashboard: estado de perfiles + proximas acciones
 - [ ] Job scraper
 
 Cada item de este roadmap se disena e implementa como su propio spec.
