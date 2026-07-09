@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, defaultExclude } from "vitest/config";
 import { config } from "dotenv";
 import path from "path";
 
@@ -12,5 +12,6 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    exclude: [...defaultExclude, "**/.claude/**"],
   },
 });
