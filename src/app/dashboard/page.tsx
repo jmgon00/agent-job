@@ -53,7 +53,13 @@ export default function DashboardPage() {
       setJobs((current) =>
         current
           ? current.map((j) =>
-              j.id === jobId ? { ...j, status: previous ?? j.status } : j
+              // Only revert if this row still shows the optimistic value
+              // THIS request set. If a newer status change already
+              // succeeded and moved the row past newStatus, leave it —
+              // otherwise this failure would clobber that later success.
+              j.id === jobId && j.status === newStatus
+                ? { ...j, status: previous ?? j.status }
+                : j
             )
           : current
       );
