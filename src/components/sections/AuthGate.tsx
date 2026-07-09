@@ -13,6 +13,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<StoredUser | null | undefined>(undefined);
 
   useEffect(() => {
+    // localStorage is unavailable during SSR; reading it here (rather than
+    // in the initial useState) avoids a hydration mismatch by deferring the
+    // divergence from the server-rendered `undefined` until after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(getStoredUser());
   }, []);
 
