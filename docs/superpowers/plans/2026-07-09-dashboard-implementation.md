@@ -56,30 +56,38 @@ beforeAll(async () => {
   const other = await prisma.user.create({ data: { email: otherUserEmail } });
   otherUserId = other.id;
 
-  await prisma.savedJob.createMany({
-    data: [
-      {
-        userId: testUserId,
-        title: "Dev 1",
-        company: "Acme",
-        portal: "linkedin",
-        link: "https://x.com/1",
-      },
-      {
-        userId: testUserId,
-        title: "Dev 2",
-        company: "Beta",
-        portal: "bumeran",
-        link: "https://x.com/2",
-      },
-      {
-        userId: otherUserId,
-        title: "Other job",
-        company: "Gamma",
-        portal: "linkedin",
-        link: "https://x.com/3",
-      },
-    ],
+  // Created via separate `create()` calls with explicit createdAt values,
+  // not a single createMany: Postgres evaluates now() once per statement,
+  // so a createMany batch gives every row in it an IDENTICAL createdAt,
+  // which breaks the "newest first" ordering assertion below.
+  await prisma.savedJob.create({
+    data: {
+      userId: testUserId,
+      title: "Dev 1",
+      company: "Acme",
+      portal: "linkedin",
+      link: "https://x.com/1",
+      createdAt: new Date("2024-01-01T00:00:00.000Z"),
+    },
+  });
+  await prisma.savedJob.create({
+    data: {
+      userId: testUserId,
+      title: "Dev 2",
+      company: "Beta",
+      portal: "bumeran",
+      link: "https://x.com/2",
+      createdAt: new Date("2024-01-02T00:00:00.000Z"),
+    },
+  });
+  await prisma.savedJob.create({
+    data: {
+      userId: otherUserId,
+      title: "Other job",
+      company: "Gamma",
+      portal: "linkedin",
+      link: "https://x.com/3",
+    },
   });
 });
 
