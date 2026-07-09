@@ -67,6 +67,16 @@ contrasena, sesion ni verificacion de email — es un mecanismo de identidad min
 para el MVP. Hay un boton "Cerrar sesion" para limpiar el localStorage y volver a
 ver el modal.
 
+## Upload de Excel
+
+En `/upload` (requiere estar autenticado) se puede subir un archivo `.xlsx` con
+postulaciones/empleos guardados. La primera fila debe tener estos encabezados
+(en cualquier orden): `Titulo`, `Empresa`, `Portal`, `Salario` (opcional), `Link`,
+`Estado` (opcional, por defecto `"saved"`). Cada fila valida se guarda como un
+`SavedJob`; las filas con `Titulo`/`Empresa`/`Portal`/`Link` faltante se reportan
+como error sin frenar el resto del archivo. Limite de tamano: 5MB por archivo.
+No hay deduplicacion (cada subida crea filas nuevas) ni soporte para `.xls`/`.csv`.
+
 ## Tests
 
 ```bash
@@ -74,9 +84,10 @@ npm run test
 ```
 
 Corre con [Vitest](https://vitest.dev/). Los tests de `src/app/api/auth/route.test.ts`
-son de integracion contra tu base de datos real de Neon (no hay mock): necesitas un
-`DATABASE_URL` valido en `.env.local` para correrlos, y cada test limpia las filas
-que crea (emails unicos bajo `@agentjob-test.local`).
+y `src/app/api/jobs/upload/route.test.ts` son de integracion contra tu base de datos
+real de Neon (no hay mock): necesitas un `DATABASE_URL` valido en `.env.local` para
+correrlos, y cada test limpia las filas que crea (emails unicos bajo
+`@agentjob-test.local`).
 
 ## Estructura del Proyecto
 
@@ -86,9 +97,11 @@ src/
     api/
       auth/
       jobs/
+        upload/
       profiles/
       applications/
     dashboard/
+    upload/
     page.tsx
   components/
     sections/
@@ -99,6 +112,7 @@ src/
     agents/
     auth-storage.ts
     db.ts
+    excel-parser.ts
     validators.ts
   content/
   types/
@@ -110,7 +124,7 @@ prisma/
 ## Roadmap MVP
 
 - [x] Autenticacion minima (email + localStorage)
-- [ ] Upload de Excel con postulaciones/perfiles
+- [x] Upload de Excel con postulaciones/perfiles
 - [ ] Agente de IA: optimizacion de CV/perfil por portal
 - [ ] Conexion a APIs de LinkedIn / Bumeran
 - [ ] Dashboard: estado de perfiles + proximas acciones

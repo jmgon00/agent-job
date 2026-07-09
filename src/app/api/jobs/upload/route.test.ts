@@ -99,4 +99,16 @@ describe("POST /api/jobs/upload", () => {
     const response = await POST(uploadRequest(formData));
     expect(response.status).toBe(400);
   });
+
+  it("rejects a file over 5MB with 400 before parsing", async () => {
+    const oversized = new Uint8Array(5 * 1024 * 1024 + 1);
+    const formData = new FormData();
+    formData.set("userId", testUserId);
+    formData.set("file", new Blob([oversized]), "jobs.xlsx");
+
+    const response = await POST(uploadRequest(formData));
+    expect(response.status).toBe(400);
+    const json = await response.json();
+    expect(json.error).toBe("El archivo es demasiado grande (maximo 5MB)");
+  });
 });

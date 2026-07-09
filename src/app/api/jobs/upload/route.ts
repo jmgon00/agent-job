@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { parseExcelRows } from "@/lib/excel-parser";
 
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
 export async function POST(request: Request) {
   const formData = await request.formData();
   const userId = formData.get("userId");
@@ -14,6 +16,13 @@ export async function POST(request: Request) {
   if (!(file instanceof File) || !file.name.toLowerCase().endsWith(".xlsx")) {
     return NextResponse.json(
       { error: "Solo se aceptan archivos .xlsx" },
+      { status: 400 }
+    );
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return NextResponse.json(
+      { error: "El archivo es demasiado grande (maximo 5MB)" },
       { status: 400 }
     );
   }
