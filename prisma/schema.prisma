@@ -48,6 +48,7 @@ model SavedJob {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   company   String
+  location  String?
   portal    String
   salary    String?
   link      String
