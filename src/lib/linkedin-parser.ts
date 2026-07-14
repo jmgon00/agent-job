@@ -43,6 +43,7 @@ export function parseLinkedInHtml(html: string): LinkedInParseResult {
     if (!href) return;
 
     const link = normalizeJobUrl(href);
+    seenLinks.add(link);
     const title = collapseWhitespace($card.find(".base-search-card__title").first().text());
     const company = collapseWhitespace($card.find(".base-search-card__subtitle").first().text());
     const locationText = collapseWhitespace(
@@ -56,7 +57,6 @@ export function parseLinkedInHtml(html: string): LinkedInParseResult {
 
     const salaryMatch = collapseWhitespace($card.text()).match(SALARY_RE);
 
-    seenLinks.add(link);
     jobs.push({
       title,
       company,

@@ -79,4 +79,26 @@ describe("parseLinkedInHtml", () => {
     expect(result.jobs).toEqual([]);
     expect(result.unrecognizedCount).toBe(0);
   });
+
+  it("counts a known-markup card missing a title only once, without leaking a fabricated job from the fallback pass", () => {
+    const html = `
+      <ul>
+        <li>
+          <div class="base-card job-search-card">
+            <a class="base-card__full-link" href="/jobs/view/444">
+              <h4 class="base-search-card__subtitle">Mercado Libre</h4>
+              <div class="base-search-card__metadata">
+                <span class="job-search-card__location">Buenos Aires, Argentina</span>
+              </div>
+            </a>
+          </div>
+        </li>
+      </ul>
+    `;
+
+    const result = parseLinkedInHtml(html);
+
+    expect(result.unrecognizedCount).toBe(1);
+    expect(result.jobs).toHaveLength(0);
+  });
 });
