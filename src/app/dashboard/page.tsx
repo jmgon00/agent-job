@@ -8,6 +8,7 @@ interface SavedJobRow {
   id: string;
   title: string;
   company: string;
+  location: string | null;
   portal: string;
   link: string;
   status: JobStatus;
@@ -113,6 +114,7 @@ export default function DashboardPage() {
           <tr className="border-b border-dark-700 text-sm text-dark-400">
             <th className="py-2 pr-4">Titulo</th>
             <th className="py-2 pr-4">Empresa</th>
+            <th className="py-2 pr-4">Ubicacion</th>
             <th className="py-2 pr-4">Portal</th>
             <th className="py-2 pr-4">Estado</th>
             <th className="py-2 pr-4">Link</th>
@@ -123,6 +125,7 @@ export default function DashboardPage() {
             <tr key={job.id} className="border-b border-dark-800">
               <td className="py-2 pr-4">{job.title}</td>
               <td className="py-2 pr-4">{job.company}</td>
+              <td className="py-2 pr-4">{job.location ?? "—"}</td>
               <td className="py-2 pr-4">{job.portal}</td>
               <td className="py-2 pr-4">
                 <select
