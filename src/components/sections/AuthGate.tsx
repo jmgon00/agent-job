@@ -48,6 +48,9 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
           <a href="/profile" className="hover:text-cyan-400">
             Perfil
           </a>
+          <a href="/import/linkedin" className="hover:text-cyan-400">
+            Importar LinkedIn
+          </a>
         </nav>
         <div className="flex items-center gap-4">
           <span>{user.email}</span>
